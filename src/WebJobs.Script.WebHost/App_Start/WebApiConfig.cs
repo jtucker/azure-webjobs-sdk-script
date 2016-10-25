@@ -20,7 +20,8 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost
 
         public static void Register(HttpConfiguration config)
         {
-            Register(config, ScriptSettingsManager.Instance, GetDefaultSettings());
+            _settingsManager = ScriptSettingsManager.Instance;
+            Register(config, _settingsManager, GetDefaultSettings());
         }
 
         public static void Register(HttpConfiguration config, ScriptSettingsManager settingsManager, WebHostSettings settings = null, Action<ContainerBuilder, WebHostSettings> dependencyCallback = null)

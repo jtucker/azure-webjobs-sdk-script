@@ -35,8 +35,7 @@ namespace Microsoft.Azure.WebJobs.Script.Description
                 if (_optimizationLevel == null)
                 {
                     // Get the release mode setting. If set, this will take priority over environment settings.
-                    string releaseModeSetting = Environment.GetEnvironmentVariable(EnvironmentSettingNames.CompilationReleaseMode);
-
+                    string releaseModeSetting = ScriptSettingsManager.Instance.GetSetting(EnvironmentSettingNames.CompilationReleaseMode);
                     bool releaseMode;
                     if (!bool.TryParse(releaseModeSetting, out releaseMode) && !IsLocal && !IsRemoteDebuggingEnabled)
                     {

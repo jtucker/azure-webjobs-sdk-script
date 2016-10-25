@@ -2,41 +2,37 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
-using System.Collections.Concurrent;
 
 namespace Microsoft.Azure.WebJobs.Script.Config
 {
-    public sealed class ScriptSettingsManager
+    public class ScriptSettingsManager
     {
         private static readonly ScriptSettingsManager _instance = new ScriptSettingsManager();
-
-        private static ConcurrentDictionary<string, string> _settings;
 
         public static ScriptSettingsManager Instance
         {
             get { return _instance; }
         }
 
-        private ScriptSettingsManager()
+        protected ScriptSettingsManager()
         {
-            _settings = new ConcurrentDictionary<string, string>();
         }
 
-        public void Reset()
+        public virtual void Reset()
         {
-            _settings.Clear();
         }
 
-        public string GetSetting(string settingKey)
+        public virtual string GetSetting(string settingKey)
         {
-            string envSettingValue = Environment.GetEnvironmentVariable(settingKey);
-            string settingValue = _settings.GetOrAdd(settingKey, envSettingValue);
-            return settingValue;
+            return Environment.GetEnvironmentVariable(settingKey);
         }
 
-        public void SetSetting(string settingKey, string settingValue)
+        public virtual void SetSetting(string settingKey, string settingValue)
         {
-            _settings.AddOrUpdate(settingKey, settingValue, (key, existingValue) => settingValue);
+            if (!string.IsNullOrEmpty(settingKey))
+            {
+                Environment.SetEnvironmentVariable(settingKey, settingValue);
+            }
         }
     }
 }
