@@ -119,8 +119,6 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost
                     _standbySecretManager = null;
                     _standbyHostManager = null;
                     _standbyReceiverManager = null;
-
-                    _settingsManager.Reset();
                 }
             }
             else

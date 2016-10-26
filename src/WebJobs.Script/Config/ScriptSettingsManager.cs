@@ -7,18 +7,15 @@ namespace Microsoft.Azure.WebJobs.Script.Config
 {
     public class ScriptSettingsManager
     {
-        private static readonly ScriptSettingsManager _instance = new ScriptSettingsManager();
+        private static ScriptSettingsManager _instance = new ScriptSettingsManager();
 
         public static ScriptSettingsManager Instance
         {
             get { return _instance; }
+            set { _instance = value; }
         }
 
         protected ScriptSettingsManager()
-        {
-        }
-
-        public virtual void Reset()
         {
         }
 

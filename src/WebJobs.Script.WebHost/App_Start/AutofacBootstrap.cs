@@ -11,7 +11,7 @@ namespace Microsoft.Azure.WebJobs.Script.WebHost
     {
         internal static void Initialize(ScriptSettingsManager settingsManager, ContainerBuilder builder, WebHostSettings settings)
         {
-            builder.RegisterType<ScriptSettingsManager>().As<ScriptSettingsManager>().SingleInstance();
+            builder.RegisterType<ScriptSettingsManager>().SingleInstance();
 
             // register the resolver so that it is disposed when the container
             // is disposed
