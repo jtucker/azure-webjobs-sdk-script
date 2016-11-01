@@ -68,6 +68,10 @@
       <HintPath>..\..\packages\EntityFramework.6.0.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="FluentCommandLineParser, Version=1.4.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\FluentCommandLineParser.1.4.3\lib\net35\FluentCommandLineParser.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Humanizer, Version=1.33.7.0, Culture=neutral, PublicKeyToken=979442b78dfc278e, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Humanizer.1.33.7\lib\portable-win+net40+sl50+wp8+wpa81\Humanizer.dll</HintPath>
       <Private>True</Private>
@@ -179,6 +183,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActionAttribute.cs" />
+    <Compile Include="Actions\HostActions\StartAction.cs" />
     <Compile Include="Arm\ArmManager.cs" />
     <Compile Include="Arm\ArmManagerPartials\ResourceGroupArmManager.cs" />
     <Compile Include="Arm\ArmManagerPartials\SiteArmManager.cs" />
@@ -196,6 +202,7 @@
     <Compile Include="Common\SecretsManager.cs" />
     <Compile Include="Common\Loadable.cs" />
     <Compile Include="Common\TipsManager.cs" />
+    <Compile Include="Context.cs" />
     <Compile Include="Extensions\FunctionStatusExtensions.cs" />
     <Compile Include="Extensions\GenericExtensions.cs" />
     <Compile Include="Extensions\IEnumerableExtensions.cs" />
@@ -218,6 +225,7 @@
     <Compile Include="DependencyResolver.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\DebuggerHelper.cs" />
+    <Compile Include="Interfaces\IAction.cs" />
     <Compile Include="Interfaces\IAnalyticsManager.cs" />
     <Compile Include="Interfaces\IProcessInfo.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
@@ -225,23 +233,6 @@
     <Compile Include="Interfaces\ISettings.cs" />
     <Compile Include="Interfaces\ITipsManager.cs" />
     <Compile Include="NativeMethods\ProcessNativeMethods.cs" />
-    <Compile Include="NCli\ConsoleApp.cs" />
-    <Compile Include="NCli\ConsoleAppUtilities.cs" />
-    <Compile Include="NCli\Constants.cs" />
-    <Compile Include="NCli\DefaultHelp.cs" />
-    <Compile Include="NCli\Extensions.cs" />
-    <Compile Include="NCli\HelpLine.cs" />
-    <Compile Include="NCli\HelpText.cs" />
-    <Compile Include="NCli\IDependencyResolver.cs" />
-    <Compile Include="NCli\IVerb.cs" />
-    <Compile Include="NCli\IVerbError.cs" />
-    <Compile Include="NCli\IVerbPostRun.cs" />
-    <Compile Include="NCli\IVerbPreRun.cs" />
-    <Compile Include="NCli\OptionAttribute.cs" />
-    <Compile Include="NCli\ParseException.cs" />
-    <Compile Include="NCli\OptionInfo.cs" />
-    <Compile Include="NCli\VerbType.cs" />
-    <Compile Include="NCli\VerbAttribute.cs" />
     <Compile Include="Verbs\ConfigVerb.cs" />
     <Compile Include="Verbs\HelpVerb.cs" />
     <Compile Include="Verbs\List\BaseListVerb.cs" />
