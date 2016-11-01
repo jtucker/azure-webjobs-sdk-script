@@ -392,7 +392,6 @@
     <Compile Include="Description\DotNet\PackageReference.cs" />
     <Compile Include="Description\Binding\HttpTriggerBindingMetadata.cs" />
     <Compile Include="Description\ScriptType.cs" />
-    <Compile Include="Description\Binding\TableBindingMetadata.cs" />
     <Compile Include="Diagnostics\ConditionalTraceWriter.cs" />
     <Compile Include="Diagnostics\ConsoleTraceWriter.cs" />
     <Compile Include="Diagnostics\FileLoggingMode.cs" />

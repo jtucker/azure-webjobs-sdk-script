@@ -73,9 +73,8 @@ namespace Microsoft.Azure.WebJobs.Script.Binding
             }
             else if (_binding.DefaultType == typeof(JArray))
             {
-                JArray entityArray = await context.Binder.BindAsync<JArray>(_attributes.ToArray());
-                string json = entityArray.ToString(Formatting.None);
-                context.Value = json;
+                JArray entityArray = await context.Binder.BindAsync<JArray>(_attributes.ToArray());                
+                context.Value = entityArray;
             }
             else
             {

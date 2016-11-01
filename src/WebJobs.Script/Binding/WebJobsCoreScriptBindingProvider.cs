@@ -139,13 +139,16 @@ namespace Microsoft.Azure.WebJobs.Script
             {
             }
 
-            private string TableName {
+            private string TableName
+            {
                 get { return Context.GetMetadataValue<string>("tableName"); }
             }
+
             private string PartitionKey
             {
                 get { return Context.GetMetadataValue<string>("partitionKey"); }
             }
+
             private string RowKey
             {
                 get { return Context.GetMetadataValue<string>("rowKey"); }
@@ -155,6 +158,7 @@ namespace Microsoft.Azure.WebJobs.Script
             {
                 get { return Context.GetMetadataValue<string>("filter"); }
             }
+
             private int? Take
             {
                 get { return Context.GetMetadataValue<int?>("take"); }
