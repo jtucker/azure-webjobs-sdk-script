@@ -4,7 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Autofac;
-using NCli;
+using WebJobs.Script.Cli.Interfaces;
 
 namespace WebJobs.Script.Cli
 {

@@ -7,6 +7,7 @@ using static WebJobs.Script.Cli.Common.OutputTheme;
 
 namespace WebJobs.Script.Cli.Actions.AzureActions
 {
+    [Action(Name = "create", Context = Context.Azure, SubContext = Context.FunctionApp)]
     class CreateFunctionAppAction : BaseAction
     {
         private IArmManager _armManager;

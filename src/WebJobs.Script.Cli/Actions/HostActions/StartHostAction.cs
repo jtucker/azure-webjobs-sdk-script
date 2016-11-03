@@ -16,7 +16,7 @@ using WebJobs.Script.Cli.Helpers;
 namespace WebJobs.Script.Cli.Actions.HostActions
 {
     [Action(Name = "start", Context = Context.Host)]
-    class StartHostAction : BaseAction
+    class StartHostAction : BaseAction, IDisposable
     {
         private FileSystemWatcher fsWatcher;
         const int DefaultPort = 7071;

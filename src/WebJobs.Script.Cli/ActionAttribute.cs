@@ -3,7 +3,7 @@
 namespace WebJobs.Script.Cli
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    class ActionAttribute : Attribute
+    sealed class ActionAttribute : Attribute
     {
         public Context Context { get; set; }
 

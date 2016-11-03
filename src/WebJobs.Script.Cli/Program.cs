@@ -9,7 +9,6 @@ using ARMClient.Authentication.AADAuthentication;
 using ARMClient.Authentication.Contracts;
 using ARMClient.Library;
 using Autofac;
-using NCli;
 using WebJobs.Script.Cli.Arm;
 using WebJobs.Script.Cli.Common;
 using WebJobs.Script.Cli.Interfaces;
@@ -88,8 +87,8 @@ namespace WebJobs.Script.Cli
                 .SingleInstance()
                 .ExternallyOwned();
 
-            builder.RegisterType<TipsManager>()
-                .As<ITipsManager>();
+            //builder.RegisterType<TipsManager>()
+            //    .As<ITipsManager>();
 
             return new DependencyResolver(builder.Build());
         }

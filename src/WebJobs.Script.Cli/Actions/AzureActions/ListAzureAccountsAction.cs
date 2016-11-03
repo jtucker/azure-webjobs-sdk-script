@@ -7,11 +7,11 @@ namespace WebJobs.Script.Cli.Actions.AzureActions
 {
     [Action(Name = "list", Context = Context.Azure, SubContext = Context.Account)]
     [Action(Name = "list", Context = Context.Azure, SubContext = Context.Subscriptions)]
-    class ListAccounts : BaseAction
+    class ListAzureAccountsAction : BaseAction
     {
         private readonly IArmManager _armManager;
 
-        public ListAccounts(IArmManager armManager)
+        public ListAzureAccountsAction(IArmManager armManager)
         {
             _armManager = armManager;
         }

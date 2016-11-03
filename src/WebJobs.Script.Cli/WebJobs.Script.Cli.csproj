@@ -189,11 +189,12 @@
     <Compile Include="Actions\AzureActions\EnableGitRepoAction.cs" />
     <Compile Include="Actions\AzureActions\GetPublishUserNameAction.cs" />
     <Compile Include="Actions\AzureActions\ListStorageAction.cs" />
+    <Compile Include="Actions\AzureActions\SetAzureAccountAction.cs" />
     <Compile Include="Actions\AzureActions\SetPublishPasswordAction.cs" />
     <Compile Include="Actions\BaseAction.cs" />
     <Compile Include="Actions\AzureActions\BaseFunctionAppAction.cs" />
     <Compile Include="Actions\AzureActions\FetchAppSettingsAction.cs" />
-    <Compile Include="Actions\AzureActions\ListAccounts.cs" />
+    <Compile Include="Actions\AzureActions\ListAzureAccountsAction.cs" />
     <Compile Include="Actions\AzureActions\ListFunctionAppsAction.cs" />
     <Compile Include="Actions\AzureActions\LoginAction.cs" />
     <Compile Include="Actions\AzureActions\LogoutAction.cs" />
@@ -206,6 +207,7 @@
     <Compile Include="Actions\LocalActions\InitAction.cs" />
     <Compile Include="Actions\LocalActions\ListSettingsAction.cs" />
     <Compile Include="Actions\LocalActions\RunFunctionAction.cs" />
+    <Compile Include="ActionType.cs" />
     <Compile Include="Arm\ArmManager.cs" />
     <Compile Include="Arm\ArmManagerPartials\ResourceGroupArmManager.cs" />
     <Compile Include="Arm\ArmManagerPartials\SiteArmManager.cs" />
@@ -223,6 +225,8 @@
     <Compile Include="Common\SecretsManager.cs" />
     <Compile Include="Common\Loadable.cs" />
     <Compile Include="Common\TipsManager.cs" />
+    <Compile Include="ConsoleApp.cs" />
+    <Compile Include="ConsoleAppUtilities.cs" />
     <Compile Include="Context.cs" />
     <Compile Include="Extensions\FunctionStatusExtensions.cs" />
     <Compile Include="Extensions\GenericExtensions.cs" />
@@ -248,17 +252,13 @@
     <Compile Include="Helpers\DebuggerHelper.cs" />
     <Compile Include="Interfaces\IAction.cs" />
     <Compile Include="Interfaces\IAnalyticsManager.cs" />
+    <Compile Include="Interfaces\IDependencyResolver.cs" />
     <Compile Include="Interfaces\IProcessInfo.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Interfaces\ISecretsManager.cs" />
     <Compile Include="Interfaces\ISettings.cs" />
     <Compile Include="Interfaces\ITipsManager.cs" />
     <Compile Include="NativeMethods\ProcessNativeMethods.cs" />
-    <Compile Include="Verbs\ConfigVerb.cs" />
-    <Compile Include="Verbs\HelpVerb.cs" />
-    <Compile Include="Verbs\List\ListSecrets.cs" />
-    <Compile Include="Verbs\List\ListTenants.cs" />
-    <Compile Include="Verbs\SwitchTenantsVerb.cs" />
     <Compile Include="Common\FileSystemHelpers.cs" />
     <Compile Include="Common\Newable.cs" />
     <Compile Include="Common\SourceControl.cs" />
@@ -276,10 +276,6 @@
     <Compile Include="NativeMethods\ConsoleNativeMethods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Verbs\CertVerb.cs" />
-    <Compile Include="Verbs\SetVerb.cs" />
-    <Compile Include="Verbs\RunVerb.cs" />
-    <Compile Include="Verbs\UserVerb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

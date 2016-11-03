@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentAssertions;
-using NCli;
 using Xunit;
 
 namespace WebJobs.Script.Cli.Tests.NCliTests
@@ -30,7 +29,6 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
             public ICollection<string> CollectionOfStrings { get; set; }
         }
 
-        [Verb]
         public class TestClass2 { }
 
         [Verb(HelpText = "help", Scope = 10, ShowInHelp = false, Usage = "usage")]
@@ -74,7 +72,7 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
         {
             // Test
             object obj = null;
-            var actual = ConsoleAppUtilities.TryParseEnum(type, value, out obj);
+            var actual = ConsoleApp.TryParseEnum(type, value, out obj);
 
             // Assert
             actual.Should().Be(expected);
@@ -88,7 +86,7 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
         public void TypeToAttributeTest(Type type, string verbName, string help, bool showInHelp, string usage, object scope)
         {
             // Test
-            var result = ConsoleAppUtilities.TypeToAttribute(type);
+            var result = ConsoleApp.TypeToAttribute(type);
 
             // Assert
             result.Names.Should().Contain(verbName.ToLowerInvariant(), because: "TypeToAttribute should return a correct VerbAttribute");
@@ -121,7 +119,7 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
         {
             // Test
             object actualObject = null;
-            var actualResult = ConsoleAppUtilities.TryCast(arg, type, out actualObject);
+            var actualResult = ConsoleApp.TryCast(arg, type, out actualObject);
 
             // Assert
             actualResult.Should().Be(expectedResult);
@@ -157,7 +155,7 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
             // Test
             var stack = args != null ? new Stack<string>(args.Reverse()) : null;
             object actualObject = null;
-            var actualResult = ConsoleAppUtilities.TryParseOption(option, stack, out actualObject);
+            var actualResult = ConsoleApp.TryParseOption(option, stack, out actualObject);
 
             // Assert
             actualResult.Should().Be(expectedResult);
@@ -188,10 +186,10 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
         {
             // Setup
             const string cliName = "testCli";
-            var verbTypes = types.Select(ConsoleAppUtilities.TypeToVerbType);
+            var verbTypes = types.Select(ConsoleApp.TypeToVerbType);
 
             // Test
-            var result = ConsoleAppUtilities.GeneralHelp(verbTypes, cliName);
+            var result = ConsoleApp.GeneralHelp(verbTypes, cliName);
 
             // Assert
             result.Should().Contain(l => l.ToString().Contains(cliName));
@@ -249,10 +247,10 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
         public void GetVerbTypeTest(string[] args, IEnumerable<Type> types, Type expectedType)
         {
             // Setup
-            var verbTypes = types.Select(ConsoleAppUtilities.TypeToVerbType);
+            var verbTypes = types.Select(ConsoleApp.TypeToVerbType);
 
             // Test
-            var actualType = ConsoleAppUtilities.GetVerbType(args, verbTypes);
+            var actualType = ConsoleApp.GetVerbType(args, verbTypes);
 
             // Assert
             actualType.Type.Should().Be(expectedType);
@@ -278,8 +276,8 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
         public void ValidateVerbsTest(IEnumerable<Type> types, bool error, string message)
         {
             // Setup
-            var verbTypes = types.Select(ConsoleAppUtilities.TypeToVerbType);
-            Action action = () => ConsoleAppUtilities.ValidateVerbs(verbTypes);
+            var verbTypes = types.Select(ConsoleApp.TypeToVerbType);
+            Action action = () => ConsoleApp.ValidateVerbs(verbTypes);
 
             // Test and Assert
             if (error)
@@ -302,10 +300,10 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
                 .Assembly
                 .GetTypes()
                 .Where(t => typeof(IVerb).IsAssignableFrom(t) && !t.IsAbstract && t != typeof(DefaultHelp))
-                .Select(ConsoleAppUtilities.TypeToVerbType);
+                .Select(ConsoleApp.TypeToVerbType);
 
             // Test
-            Action action = () => ConsoleAppUtilities.ValidateVerbs(verbTypes);
+            Action action = () => ConsoleApp.ValidateVerbs(verbTypes);
 
             // Assert
             action.ShouldNotThrow();
@@ -337,10 +335,10 @@ namespace WebJobs.Script.Cli.Tests.NCliTests
                 .Assembly
                 .GetTypes()
                 .Where(t => typeof(IVerb).IsAssignableFrom(t) && !t.IsAbstract && t != typeof(DefaultHelp))
-                .Select(ConsoleAppUtilities.TypeToVerbType);
+                .Select(ConsoleApp.TypeToVerbType);
 
             // Test
-            var help = ConsoleAppUtilities.BuildHelp(args, verbTypes, "cli", faulted);
+            var help = ConsoleApp.BuildHelp(args, verbTypes, "cli", faulted);
 
             // Assert
             help.Should().NotBeEmpty();
