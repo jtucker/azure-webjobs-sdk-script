@@ -1,35 +1,24 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
-
+﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Colors.Net;
-using NCli;
 using WebJobs.Script.Cli.Arm;
-using WebJobs.Script.Cli.Common;
-using WebJobs.Script.Cli.Interfaces;
 using static WebJobs.Script.Cli.Common.OutputTheme;
 
-namespace WebJobs.Script.Cli.Verbs.List
+namespace WebJobs.Script.Cli.Actions.AzureActions
 {
-    [Verb("list", Scope = Listable.FunctionApps, HelpText = "Lists function apps in current tenant. See switch-tenant command")]
-    internal class ListFunctionApps : BaseListVerb
+    [Action(Name = "list", Context = Context.Azure, SubContext = Context.FunctionApp)]
+    class ListFunctionAppsAction : BaseAction
     {
         private readonly IArmManager _armManager;
 
-        public ListFunctionApps(IArmManager armManager, ITipsManager tipsManager)
-            : base(tipsManager)
+        public ListFunctionAppsAction(IArmManager armManager)
         {
             _armManager = armManager;
         }
 
         public override async Task RunAsync()
         {
-            var tenant = await _armManager.GetCurrentTenantAsync();
-            ColoredConsole
-                .WriteLine(VerboseColor($"Tenant: {tenant.displayName} ({tenant.domain})"))
-                .WriteLine();
-
             var user = await _armManager.GetUserAsync();
             var functionApps = await _armManager.GetFunctionAppsAsync();
             if (functionApps.Any())
@@ -48,8 +37,6 @@ namespace WebJobs.Script.Cli.Verbs.List
             {
                 ColoredConsole.Error.WriteLine(ErrorColor("   -> No function apps found"));
             }
-
-            _tipsManager.DisplayTips($"{TitleColor("Tip:")} to switch tenants run {ExampleColor("func switch-tenants")}");
         }
     }
 }

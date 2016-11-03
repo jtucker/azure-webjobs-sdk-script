@@ -12,7 +12,7 @@ namespace WebJobs.Script.Cli.Arm
     {
         Task<IEnumerable<Site>> GetFunctionAppsAsync();
         Task<Site> GetFunctionAppAsync(string name);
-        Task<Site> CreateFunctionAppAsync(Subscription subscription, string functionAppName, string geoLocation);
+        Task<Site> CreateFunctionAppAsync(string subscription, string resrouceGroup, string functionAppName, string geoLocation);
         Task<ArmWebsitePublishingCredentials> GetUserAsync();
         Task UpdateUserAsync(string userName, string password);
         Task LoginAsync();

@@ -40,17 +40,18 @@ namespace WebJobs.Script.Cli.Arm
             return await LoadAsync(functionApps.FirstOrDefault(s => s.SiteName.Equals(name, StringComparison.OrdinalIgnoreCase)));
         }
 
-        public async Task<Site> CreateFunctionAppAsync(Subscription subscription, string functionAppName, string geoLocation)
+        public async Task<Site> CreateFunctionAppAsync(string subscriptionStr, string resourceGroupStr, string functionAppNameStr, string geoLocationStr)
         {
+            var subscription = new Subscription(subscriptionStr, string.Empty);
             var resourceGroup = await EnsureResourceGroupAsync(
                 new ResourceGroup(
                     subscription.SubscriptionId,
-                    $"AzureFunctions-{geoLocation.ToString()}",
-                    geoLocation.ToString())
+                    resourceGroupStr,
+                    geoLocationStr)
                 );
 
             var storageAccount = await EnsureAStorageAccountAsync(resourceGroup);
-            var functionApp = new Site(subscription.SubscriptionId, resourceGroup.ResourceGroupName, functionAppName);
+            var functionApp = new Site(subscription.SubscriptionId, resourceGroup.ResourceGroupName, functionAppNameStr);
             var keys = await GetStorageAccountKeysAsync(storageAccount);
             var connectionString = $"DefaultEndpointsProtocol=https;AccountName={storageAccount.StorageAccountName};AccountKey={keys.First().Value}";
             var armFunctionApp = await ArmHttpAsync<ArmWrapper<object>>(HttpMethod.Put, ArmUriTemplates.Site.Bind(functionApp),
@@ -74,7 +75,7 @@ namespace WebJobs.Script.Cli.Arm
                             },
                             sku = "Dynamic"
                         },
-                        location = geoLocation.ToString(),
+                        location = geoLocationStr,
                         kind = "functionapp"
                     });
 

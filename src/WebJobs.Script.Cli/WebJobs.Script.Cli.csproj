@@ -184,7 +184,28 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ActionAttribute.cs" />
-    <Compile Include="Actions\HostActions\StartAction.cs" />
+    <Compile Include="Actions\AzureActions\BasePublishUserAction.cs" />
+    <Compile Include="Actions\AzureActions\CreateFunctionAppAction.cs" />
+    <Compile Include="Actions\AzureActions\EnableGitRepoAction.cs" />
+    <Compile Include="Actions\AzureActions\GetPublishUserNameAction.cs" />
+    <Compile Include="Actions\AzureActions\ListStorageAction.cs" />
+    <Compile Include="Actions\AzureActions\SetPublishPasswordAction.cs" />
+    <Compile Include="Actions\BaseAction.cs" />
+    <Compile Include="Actions\AzureActions\BaseFunctionAppAction.cs" />
+    <Compile Include="Actions\AzureActions\FetchAppSettingsAction.cs" />
+    <Compile Include="Actions\AzureActions\ListAccounts.cs" />
+    <Compile Include="Actions\AzureActions\ListFunctionAppsAction.cs" />
+    <Compile Include="Actions\AzureActions\LoginAction.cs" />
+    <Compile Include="Actions\AzureActions\LogoutAction.cs" />
+    <Compile Include="Actions\AzureActions\PortalAction.cs" />
+    <Compile Include="Actions\HostActions\StartHostAction.cs" />
+    <Compile Include="Actions\HostActions\StopHostAction.cs" />
+    <Compile Include="Actions\LocalActions\AddSettingAction.cs" />
+    <Compile Include="Actions\LocalActions\AddStorageAccountSettingAction.cs" />
+    <Compile Include="Actions\LocalActions\CreateFunctionAction.cs" />
+    <Compile Include="Actions\LocalActions\InitAction.cs" />
+    <Compile Include="Actions\LocalActions\ListSettingsAction.cs" />
+    <Compile Include="Actions\LocalActions\RunFunctionAction.cs" />
     <Compile Include="Arm\ArmManager.cs" />
     <Compile Include="Arm\ArmManagerPartials\ResourceGroupArmManager.cs" />
     <Compile Include="Arm\ArmManagerPartials\SiteArmManager.cs" />
@@ -235,15 +256,8 @@
     <Compile Include="NativeMethods\ProcessNativeMethods.cs" />
     <Compile Include="Verbs\ConfigVerb.cs" />
     <Compile Include="Verbs\HelpVerb.cs" />
-    <Compile Include="Verbs\List\BaseListVerb.cs" />
-    <Compile Include="Verbs\List\ListFunctionApps.cs" />
     <Compile Include="Verbs\List\ListSecrets.cs" />
-    <Compile Include="Verbs\List\ListStorageAccounts.cs" />
     <Compile Include="Verbs\List\ListTenants.cs" />
-    <Compile Include="Verbs\FetchVerb.cs" />
-    <Compile Include="Verbs\LoginVerb.cs" />
-    <Compile Include="Verbs\LogoutVerb.cs" />
-    <Compile Include="Verbs\OpenVerb.cs" />
     <Compile Include="Verbs\SwitchTenantsVerb.cs" />
     <Compile Include="Common\FileSystemHelpers.cs" />
     <Compile Include="Common\Newable.cs" />
@@ -263,14 +277,9 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Verbs\CertVerb.cs" />
-    <Compile Include="Verbs\GitConfigVerb.cs" />
-    <Compile Include="Verbs\InitVerb.cs" />
     <Compile Include="Verbs\SetVerb.cs" />
-    <Compile Include="Verbs\NewVerb.cs" />
     <Compile Include="Verbs\RunVerb.cs" />
-    <Compile Include="Verbs\BaseVerb.cs" />
     <Compile Include="Verbs\UserVerb.cs" />
-    <Compile Include="Verbs\WebVerb.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -8,39 +8,44 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.SelfHost;
 using Colors.Net;
+using Fclp;
 using Microsoft.Azure.WebJobs.Script.WebHost;
-using NCli;
 using WebJobs.Script.Cli.Common;
 using WebJobs.Script.Cli.Helpers;
-using WebJobs.Script.Cli.Interfaces;
 
-namespace WebJobs.Script.Cli.Verbs
+namespace WebJobs.Script.Cli.Actions.HostActions
 {
-    [Verb("host", HelpText = "Launches a Functions server endpoint locally")]
-    internal sealed class WebVerb : BaseVerb, IDisposable
+    [Action(Name = "start", Context = Context.Host)]
+    class StartHostAction : BaseAction
     {
         private FileSystemWatcher fsWatcher;
+        const int DefaultPort = 7071;
+        const int DefaultNodeDebugPort = 5858;
 
-        [Option('p', "port", DefaultValue = 6061, HelpText = "Local port to listen on")]
         public int Port { get; set; }
 
-        [Option('c', "cert", HelpText = "Path for the cert to use. If not specified, will auto-generate a cert")]
-        public string CertPath { get; set; }
+        public int NodeDebugPort { get; set; }
 
-        [Option('k', "skipCertSetup", DefaultValue = false, HelpText = "Automatically add the cert to the trusted store")]
-        public bool SkipCertSetup { get; set; }
-
-        [Option('n', "nossl", DefaultValue = false, HelpText = "Don't use https")]
-        public bool NoSsl { get; set; }
-
-        public WebVerb(ITipsManager tipsManager)
-            : base(tipsManager)
+        public override ICommandLineParserResult ParseArgs(string[] args)
         {
-            ReadSecrets();
+            Parser
+                .Setup<int>('p', "port")
+                .WithDescription($"Local port to listen on. Default: {DefaultPort}")
+                .SetDefault(DefaultPort)
+                .Callback(p => Port = p);
+
+            Parser
+                .Setup<int>('n', "nodeDebugPort")
+                .WithDescription($"Port for node debugger to use. Default: {DefaultNodeDebugPort}")
+                .SetDefault(DefaultNodeDebugPort)
+                .Callback(p => NodeDebugPort = p);
+
+            return Parser.Parse(args);
         }
 
         public override async Task RunAsync()
         {
+            ReadSecrets();
             var baseAddress = Setup();
 
             var config = new HttpSelfHostConfiguration(baseAddress)
@@ -49,7 +54,7 @@ namespace WebJobs.Script.Cli.Verbs
                 TransferMode = TransferMode.Streamed
             };
 
-            var settings = SelfHostWebHostSettingsFactory.Create();
+            var settings = SelfHostWebHostSettingsFactory.Create(NodeDebugPort);
             Environment.SetEnvironmentVariable("EDGE_NODE_PARAMS", $"--debug={settings.NodeDebugPort}", EnvironmentVariableTarget.Process);
 
             WebApiConfig.Register(config, settings: settings);
@@ -87,42 +92,18 @@ namespace WebJobs.Script.Cli.Verbs
 
         private string Setup()
         {
-            var protocol = NoSsl ? "http" : "https";
-
-            if (SkipCertSetup)
+            if (!SecurityHelpers.IsUrlAclConfigured("http", Port))
             {
-                ColoredConsole.WriteLine($"Skipping cert checks. Assuming SSL is setup for {protocol}://localhost:{Port}");
-            }
-            else
-            {
-                if (NoSsl)
+                string errors;
+                // TODONOW
+                if (!Program.RelaunchSelfElevated($"cert -p {Port} -k", out errors))
                 {
-                    if (!SecurityHelpers.IsUrlAclConfigured(protocol, Port))
-                    {
-                        string errors;
-                        if (!Program.RelaunchSelfElevated($"cert -p {Port} -k", out errors))
-                        {
-                            ColoredConsole.WriteLine("Error: " + errors);
-                            Environment.Exit(ExitCodes.GeneralError);
-                        }
-                    }
-                }
-                else
-                {
-                    if (!SecurityHelpers.IsUrlAclConfigured(protocol, Port) ||
-                         !SecurityHelpers.IsSSLConfigured(Port))
-                    {
-                        string errors;
-                        if (!SecurityHelpers.TryElevateAndSetupCerts(CertPath, Port, out errors))
-                        {
-                            ColoredConsole.WriteLine("Error: " + errors);
-                            Environment.Exit(ExitCodes.GeneralError);
-                        }
-                    }
+                    ColoredConsole.WriteLine("Error: " + errors);
+                    Environment.Exit(ExitCodes.GeneralError);
                 }
             }
 
-            return $"{protocol}://localhost:{Port}";
+            return $"http://localhost:{Port}";
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2202:Do not dispose objects multiple times")]

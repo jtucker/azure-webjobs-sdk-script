@@ -1,22 +1,17 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
-
+﻿using System;
 using System.Threading.Tasks;
 using Colors.Net;
-using NCli;
 using WebJobs.Script.Cli.Arm;
-using WebJobs.Script.Cli.Interfaces;
 using static WebJobs.Script.Cli.Common.OutputTheme;
 
-namespace WebJobs.Script.Cli.Verbs
+namespace WebJobs.Script.Cli.Actions.AzureActions
 {
-    [Verb("git", HelpText = "Not yet Implemented", ShowInHelp = false)]
-    internal class GitConfigVerb : BaseVerb
+    [Action(Name = "get-publish-username", Context = Context.Azure)]
+    class GetPublishUserNameAction : BaseAction
     {
         private readonly IArmManager _armManager;
 
-        public GitConfigVerb(IArmManager armManager, ITipsManager tipsManager)
-            : base(tipsManager)
+        public GetPublishUserNameAction(IArmManager armManager)
         {
             _armManager = armManager;
         }
@@ -26,7 +21,7 @@ namespace WebJobs.Script.Cli.Verbs
             var user = await _armManager.GetUserAsync();
             if (string.IsNullOrEmpty(user.PublishingUserName))
             {
-                ColoredConsole.WriteLine($"Publishing user is not configured. Run {ExampleColor("func user <userName>")} to configure your publishing user");
+                ColoredConsole.WriteLine($"Publishing user is not configured. Run {ExampleColor("func azure set-publish-username <userName>")} to configure your publishing user");
             }
             else
             {
@@ -36,7 +31,7 @@ namespace WebJobs.Script.Cli.Verbs
                     .WriteLine()
                     .WriteLine()
                     .Write("run ")
-                    .Write(ExampleColor($"\"func user {user.PublishingUserName}\" "))
+                    .Write(ExampleColor($"\"func azure set-publish-password {user.PublishingUserName}\" "))
                     .WriteLine("to update the password");
             }
         }

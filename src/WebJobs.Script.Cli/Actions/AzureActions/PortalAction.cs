@@ -1,24 +1,16 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
-
+﻿using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using NCli;
 using WebJobs.Script.Cli.Arm;
-using WebJobs.Script.Cli.Interfaces;
 
-namespace WebJobs.Script.Cli.Verbs
+namespace WebJobs.Script.Cli.Actions.AzureActions
 {
-    [Verb(HelpText = "Launch default browser with link to the function app in https://portal.azure.com" )]
-    internal class OpenVerb : BaseVerb
+    [Action(Name = "portal", Context = Context.Azure, HelpText = "Launch default browser with link to the function app in https://portal.azure.com")]
+    class PortalAction : BaseFunctionAppAction
     {
-        [Option(0)]
-        public string FunctionAppName { get; set; }
-
         private readonly IArmManager _armManager;
 
-        public OpenVerb(IArmManager armManager, ITipsManager tipsManager)
-            : base(tipsManager)
+        public PortalAction(IArmManager armManager)
         {
             _armManager = armManager;
         }

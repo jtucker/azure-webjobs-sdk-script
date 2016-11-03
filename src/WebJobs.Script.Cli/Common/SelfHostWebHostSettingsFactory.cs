@@ -3,15 +3,13 @@
 
 using System;
 using System.IO;
-using System.Net;
-using System.Net.Sockets;
 using Microsoft.Azure.WebJobs.Script.WebHost;
 
 namespace WebJobs.Script.Cli.Common
 {
     internal static class SelfHostWebHostSettingsFactory
     {
-        public static WebHostSettings Create()
+        public static WebHostSettings Create(int nodeDebugPort)
         {
             return new WebHostSettings
             {
@@ -19,22 +17,8 @@ namespace WebJobs.Script.Cli.Common
                 ScriptPath = Path.Combine(Environment.CurrentDirectory),
                 LogPath = Path.Combine(Path.GetTempPath(), @"LogFiles\Application\Functions"),
                 SecretsPath = Path.Combine(Environment.CurrentDirectory, "secrets", "functions", "secrets"),
-                NodeDebugPort = GetAvailablePort()
+                NodeDebugPort = nodeDebugPort
             };
-        }
-
-        private static int GetAvailablePort()
-        {
-            var listener = new TcpListener(IPAddress.Loopback, 0);
-            try
-            {
-                listener.Start();
-                return ((IPEndPoint)listener.LocalEndpoint).Port;
-            }
-            finally
-            {
-                listener.Stop();
-            }
         }
     }
 }

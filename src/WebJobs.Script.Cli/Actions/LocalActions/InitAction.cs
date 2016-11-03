@@ -1,23 +1,19 @@
-﻿// Copyright (c) .NET Foundation. All rights reserved.
-// Licensed under the MIT License. See License.txt in the project root for license information.
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Colors.Net;
 using Microsoft.Azure.WebJobs.Script;
-using NCli;
 using WebJobs.Script.Cli.Common;
-using WebJobs.Script.Cli.Interfaces;
-using static WebJobs.Script.Cli.Common.OutputTheme;
 
-namespace WebJobs.Script.Cli.Verbs
+namespace WebJobs.Script.Cli.Actions.LocalActions
 {
-    [Verb(HelpText = "Creates .gitignore, and host.json. Runs git init .")]
-    internal class InitVerb : BaseVerb
+    [Action(Name = "init")]
+    [Action(Name = "create")]
+    [Action(Name = "init", Context = Context.FunctionApp)]
+    [Action(Name = "create", Context = Context.FunctionApp)]
+    class InitAction : BaseAction
     {
-        [Option("vsc", DefaultValue = SourceControl.Git, HelpText = "Version Control Software. Git or Hg")]
-        public SourceControl SourceControl { get; set; }
+        public SourceControl SourceControl { get; set; } = SourceControl.Git;
 
         internal readonly Dictionary<string, string> fileToContentMap = new Dictionary<string, string>
         {
@@ -48,11 +44,6 @@ project.lock.json
             { ScriptConstants.HostMetadataFileName, $"{{\"id\":\"{ Guid.NewGuid().ToString("N") }\"}}" },
             { SecretsManager.SecretsFilePath, string.Empty }
         };
-
-        public InitVerb(ITipsManager tipsManager)
-            : base(tipsManager)
-        {
-        }
 
         public override async Task RunAsync()
         {
@@ -85,7 +76,6 @@ project.lock.json
             {
                 ColoredConsole.WriteLine("Directory already a git repository.");
             }
-            _tipsManager.DisplayTips($"{TitleColor("Tip:")} run {ExampleColor("func new")} to create your first function.");
         }
     }
 }

@@ -9,6 +9,8 @@ namespace WebJobs.Script.Cli
         FunctionApp,
         Storage,
         Host,
-        Function
+        Function,
+        Subscriptions,
+        Settings
     }
 }

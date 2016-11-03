@@ -6,7 +6,7 @@ namespace WebJobs.Script.Cli.Interfaces
 {
     internal interface IAction
     {
-        ICommandLineParserResult ParseArgs(IEnumerable<string> args);
+        ICommandLineParserResult ParseArgs(string[] args);
         Task RunAsync();
     }
 }

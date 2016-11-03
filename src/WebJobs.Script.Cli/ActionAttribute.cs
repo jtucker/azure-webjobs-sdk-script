@@ -10,5 +10,7 @@ namespace WebJobs.Script.Cli
         public Context SubContext { get; set; }
 
         public string Name { get; set; }
+
+        public string HelpText { get; set; } = "placeholder";
     }
 }
