@@ -201,6 +201,7 @@
     <Compile Include="Actions\AzureActions\PortalAction.cs" />
     <Compile Include="Actions\HostActions\StartHostAction.cs" />
     <Compile Include="Actions\HostActions\StopHostAction.cs" />
+    <Compile Include="Actions\InternalUseAction.cs" />
     <Compile Include="Actions\LocalActions\AddSettingAction.cs" />
     <Compile Include="Actions\LocalActions\AddStorageAccountSettingAction.cs" />
     <Compile Include="Actions\LocalActions\CreateFunctionAction.cs" />
@@ -247,17 +248,14 @@
     <Compile Include="Arm\Models\StorageAccount.cs" />
     <Compile Include="Arm\Models\Subscription.cs" />
     <Compile Include="Common\Utilities.cs" />
-    <Compile Include="DependencyResolver.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Helpers\DebuggerHelper.cs" />
     <Compile Include="Interfaces\IAction.cs" />
     <Compile Include="Interfaces\IAnalyticsManager.cs" />
-    <Compile Include="Interfaces\IDependencyResolver.cs" />
     <Compile Include="Interfaces\IProcessInfo.cs" />
     <Compile Include="Interfaces\IProcessManager.cs" />
     <Compile Include="Interfaces\ISecretsManager.cs" />
     <Compile Include="Interfaces\ISettings.cs" />
-    <Compile Include="Interfaces\ITipsManager.cs" />
     <Compile Include="NativeMethods\ProcessNativeMethods.cs" />
     <Compile Include="Common\FileSystemHelpers.cs" />
     <Compile Include="Common\Newable.cs" />

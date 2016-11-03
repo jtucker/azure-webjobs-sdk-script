@@ -1,42 +1,97 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using Colors.Net;
+using WebJobs.Script.Cli.Common;
 using WebJobs.Script.Cli.Interfaces;
 
 namespace WebJobs.Script.Cli
 {
     class ConsoleApp
     {
-        //private readonly IDependencyResolver _dependencyResolver;
+        private readonly IContainer _container;
         private readonly string[] _args;
         private readonly IEnumerable<ActionType> _actionTypes;
-        //private readonly string _cliName;
-        //private bool _isFaulted = false;
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-        public static Task RunAsync<T>(string[] args, IDependencyResolver dependencyResolver = null)
+        public static void Run<T>(string[] args, IContainer container)
         {
-            var app = new ConsoleApp(args, typeof(T).Assembly, dependencyResolver);
-            app.Parse();
-            return Task.CompletedTask;
+            Task.Run(() => RunAsync<T>(args, container)).Wait();
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1004:GenericMethodsShouldProvideTypeParameter")]
-        public static void Run<T>(string[] args, IDependencyResolver dependencyResolver = null)
+        public static async Task RunAsync<T>(string[] args, IContainer container)
         {
-            Task.Run(() => RunAsync<T>(args, dependencyResolver)).Wait();
+            var app = new ConsoleApp(args, typeof(T).Assembly, container);
+            var action = app.Parse();
+            try
+            {
+                await action.RunAsync();
+            }
+            catch (Exception ex)
+            {
+                ColoredConsole.Error.WriteLine(ex.ToString());
+            }
         }
 
-        internal ConsoleApp(string[] args, Assembly assembly, IDependencyResolver dependencyResolver)
+        public static bool RelaunchSelfElevated(IAction action, out string errors)
+        {
+            errors = string.Empty;
+            var attribute = action.GetType().GetCustomAttribute<ActionAttribute>();
+            if (attribute != null)
+            {
+                Func<Context, string> getContext = c => c == Context.None ? string.Empty : c.ToString();
+                var context = getContext(attribute.Context);
+                var subContext = getContext(attribute.Context);
+                var name = attribute.Name;
+                var args = action
+                    .ParseArgs(Array.Empty<string>())
+                    .UnMatchedOptions
+                    .Select(o => new { Name = o.Description, ParamName = o.HasLongName ? $"--{o.LongName}" : $"-{o.ShortName}" })
+                    .Select(n =>
+                    {
+                        var property = action.GetType().GetProperty(n.Name);
+                        return $"{n.ParamName} {property.GetValue(action).ToString()}";
+                    })
+                    .Aggregate((a, b) => string.Join(" ", a, b));
+
+                var command = $"{context} {subContext} {name} {args}";
+
+                var logFile = Path.GetTempFileName();
+                var exeName = Process.GetCurrentProcess().MainModule.FileName;
+                command = $"/c \"{exeName} {command} >> {logFile}\"";
+
+
+                var startInfo = new ProcessStartInfo("cmd")
+                {
+                    Verb = "runas",
+                    Arguments = command,
+                    WorkingDirectory = Environment.CurrentDirectory,
+                    CreateNoWindow = false,
+                    UseShellExecute = true
+                };
+
+                var process = Process.Start(startInfo);
+                process.WaitForExit();
+                errors = File.ReadAllText(logFile);
+                return process.ExitCode == ExitCodes.Success;
+            }
+            else
+            {
+                throw new ArgumentException($"{nameof(IAction)} type doesn't have {nameof(ActionAttribute)}");
+            }
+        }
+
+        internal ConsoleApp(string[] args, Assembly assembly, IContainer container)
         {
             _args = args;
-            //_dependencyResolver = dependencyResolver;
-            dependencyResolver.ToString();
-            //_cliName = Process.GetCurrentProcess().ProcessName.ToLowerInvariant();
+            _container = container;
             _actionTypes = assembly
                 .GetTypes()
                 .Where(t => typeof(IAction).IsAssignableFrom(t) && !t.IsAbstract)
@@ -53,7 +108,7 @@ namespace WebJobs.Script.Cli
                 });
         }
 
-        internal void Parse()
+        internal IAction Parse()
         {
 #if DEBUG
             //ConsoleAppUtilities.ValidateVerbs(_verbTypes);
@@ -64,11 +119,10 @@ namespace WebJobs.Script.Cli
             }
 
             var argsStack = new Stack<string>(_args.Reverse());
-            var actions = Enumerable.Empty<ActionType>();
             var arg = argsStack.Peek();
             var context = Context.None;
             var subContext = Context.None;
-            var action = string.Empty;
+            var actionStr = string.Empty;
 
             if (Enum.TryParse(arg, true, out context))
             {
@@ -85,23 +139,54 @@ namespace WebJobs.Script.Cli
 
             if (argsStack.Any())
             {
-                action = argsStack.Pop();
+                actionStr = argsStack.Pop();
             }
 
-            if (context == Context.None && string.IsNullOrEmpty(action))
+            if (string.IsNullOrEmpty(actionStr))
             {
                 // error case 
             }
 
-            actions = _actionTypes
-                .Where(a => a.Names.Any(n => n.Equals(action, StringComparison.OrdinalIgnoreCase)))
+            var actionType = _actionTypes
+                .Where(a => a.Names.Any(n => n.Equals(actionStr, StringComparison.OrdinalIgnoreCase)))
                 .Where(c => c.Contexts.Contains(context))
-                .Where(c => c.SubContexts.Contains(subContext));
+                .Where(c => c.SubContexts.Contains(subContext))
+                .SingleOrDefault();
 
-            foreach(var a in actions)
+            if (actionType == null)
             {
-                Console.WriteLine(a.Type.ToString());
+                // error case
             }
+
+            var action = CreateAction(actionType);
+            var args = argsStack.ToArray();
+            try
+            {
+                var parseResult = action.ParseArgs(args);
+                if (parseResult.HasErrors)
+                {
+                    // error case
+                }
+                else
+                {
+                    return action;
+                }
+            }
+            catch (ArgumentException ex)
+            {
+                ColoredConsole.Error.WriteLine(ex);
+                throw;
+            }
+            throw new ArgumentException("asdasdas");
+        }
+
+        internal IAction CreateAction(ActionType actionType)
+        {
+            var ctor = actionType.Type.GetConstructors()?.SingleOrDefault();
+            var args = ctor?.GetParameters()?.Select(p => _container.Resolve(p.ParameterType)).ToArray();
+            return args == null || args.Length == 0
+                ? (IAction)Activator.CreateInstance(actionType.Type)
+                : (IAction)Activator.CreateInstance(actionType.Type, args);
         }
     }
 }

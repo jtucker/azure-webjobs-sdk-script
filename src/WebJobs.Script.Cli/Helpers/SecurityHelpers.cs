@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See License.txt in the project root for license information.
 
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 using CERTENROLLLib;
@@ -19,19 +20,42 @@ namespace WebJobs.Script.Cli.Helpers
 
         public static bool IsUrlAclConfigured(string protocol, int port)
         {
-            return NetSH.CMD.Http.Show.UrlAcl($"{protocol}://+:{port}/")?.ResponseObject?.Count > 0;
-        }
+            Func<dynamic, string, bool> hasProperty = (o, p) =>
+            {
+                var dictionary = o as IDictionary<string, object>;
+                return dictionary != null && dictionary.ContainsKey(p);
+            };
 
-        public static bool TryElevateAndSetupCerts(string certPath, int port, out string errors)
-        {
-            if (string.IsNullOrEmpty(certPath))
+            Func<dynamic, bool> checkUser = obj =>
             {
-                return Program.RelaunchSelfElevated($"cert -p {port}", out errors);
-            }
-            else
+                if (obj != null && hasProperty(obj, "User"))
+                {
+                    return $"{Environment.UserDomainName}\\{Environment.UserName}".Equals(obj.User.User.ToString(), StringComparison.OrdinalIgnoreCase);
+                }
+                return false;
+            };
+
+            var responses = NetSH.CMD.Http.Show.UrlAcl($"{protocol}://+:{port}/")?.ResponseObject;
+            if (responses?.Count > 0)
             {
-                return Program.RelaunchSelfElevated($"cert -p {port} -c {certPath}", out errors);
+                var response = responses[0];
+                if (response != null)
+                {
+                    if (hasProperty(response, "User") && checkUser(response))
+                    {
+                        return true;
+                    }
+
+                    if (hasProperty(response, "Users"))
+                    {
+                        foreach (var user in response.Users)
+                        {
+                            if (checkUser(user)) return true;
+                        }
+                    }
+                }
             }
+            return false;
         }
 
         public static bool IsAdministrator()

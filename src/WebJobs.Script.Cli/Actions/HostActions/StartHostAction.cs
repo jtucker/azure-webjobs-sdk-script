@@ -96,7 +96,7 @@ namespace WebJobs.Script.Cli.Actions.HostActions
             {
                 string errors;
                 // TODONOW
-                if (!Program.RelaunchSelfElevated($"cert -p {Port} -k", out errors))
+                if (!ConsoleApp.RelaunchSelfElevated(new InternalUseAction { Port = Port, Action = InternalAction.SetupUrlAcl }, out errors))
                 {
                     ColoredConsole.WriteLine("Error: " + errors);
                     Environment.Exit(ExitCodes.GeneralError);

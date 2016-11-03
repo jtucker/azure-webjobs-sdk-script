@@ -17,12 +17,10 @@ namespace WebJobs.Script.Cli
 {
     internal class Program
     {
-        internal readonly static IDependencyResolver DependencyResolver = InitializeDependencyResolve();
-
         static void Main(string[] args)
         {
             FirstTimeCliExperience();
-            ConsoleApp.Run<Program>(args, InitializeDependencyResolve());
+            ConsoleApp.Run<Program>(args, InitializeAutofacContainer());
         }
 
         private static void FirstTimeCliExperience()
@@ -35,32 +33,7 @@ namespace WebJobs.Script.Cli
             }
         }
 
-        public static bool RelaunchSelfElevated(string command, out string errors)
-        {
-            errors = string.Empty;
-            command = command ?? string.Empty;
-
-            var logFile = Path.GetTempFileName();
-            var exeName = Process.GetCurrentProcess().MainModule.FileName;
-            command = $"/c \"{exeName} {command} >> {logFile}\"";
-
-
-            var startInfo = new ProcessStartInfo("cmd")
-            {
-                Verb = "runas",
-                Arguments = command,
-                WorkingDirectory = Environment.CurrentDirectory,
-                CreateNoWindow = false,
-                UseShellExecute = true
-            };
-
-            var process = Process.Start(startInfo);
-            process.WaitForExit();
-            errors = File.ReadAllText(logFile);
-            return process.ExitCode == ExitCodes.Success;
-        }
-
-        private static IDependencyResolver InitializeDependencyResolve()
+        private static IContainer InitializeAutofacContainer()
         {
             var builder = new ContainerBuilder();
 
@@ -87,10 +60,7 @@ namespace WebJobs.Script.Cli
                 .SingleInstance()
                 .ExternallyOwned();
 
-            //builder.RegisterType<TipsManager>()
-            //    .As<ITipsManager>();
-
-            return new DependencyResolver(builder.Build());
+            return builder.Build();
         }
     }
 }

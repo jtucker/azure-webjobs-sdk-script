@@ -12,5 +12,7 @@ namespace WebJobs.Script.Cli
         public string Name { get; set; }
 
         public string HelpText { get; set; } = "placeholder";
+
+        public bool ShowInHelp { get; set; } = true;
     }
 }
